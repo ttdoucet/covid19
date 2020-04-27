@@ -73,21 +73,26 @@ def funcs(state):
 
 
 def plot_them(state):
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
+
     sdd = dd.loc[state]
-    ax = sdd.plot(x='date', y='positive', grid=True, title=state+ " cases")
+    ax = sdd.plot(ax=ax1, x='date', y='positive', grid=True, title=state+ " cases")
+    ax.set_xlabel('')
     sec = ax.secondary_yaxis('right', functions=funcs(state))
     sec.set_ylabel('per 10k population')
 
-    ax =  sdd.plot(x='date', y='death', grid=True, title=state+" deaths")
+    ax =  sdd.plot(ax=ax2, x='date', y='death', grid=True, title=state+" deaths")
     sec = ax.secondary_yaxis('right', functions=funcs(state))
+    ax.set_xlabel('')
     sec.set_ylabel('per 10k population')
+    fig.tight_layout()
 
 
 #states = ['PA', 'CA', 'LA', 'OR', 'NJ', 'AR', 'OH', 'NY']
 #states = ['MS', 'MI']
 #states = ['PA', 'MA']
-states = ['PA', 'OH']
-#states = ['PA']
+#states = ['PA', 'NM', 'OH', 'OR', 'NY', 'CA']
+states = ['CA', 'OH', 'PA', 'NY', 'NJ']
 
 for state in states:
     plot_them(state)
