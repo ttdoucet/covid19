@@ -86,13 +86,15 @@ def plot_them(state):
     ax.set_xlabel('')
     sec.set_ylabel('per 10k population')
     fig.tight_layout()
+#   fig.savefig(state+'.png')
+
 
 
 #states = ['PA', 'CA', 'LA', 'OR', 'NJ', 'AR', 'OH', 'NY']
 #states = ['MS', 'MI']
 #states = ['PA', 'MA']
 #states = ['PA', 'NM', 'OH', 'OR', 'NY', 'CA']
-states = ['CA', 'OH', 'PA', 'NY', 'NJ']
+states = ['CA', 'OH', 'PA', 'NY', 'NJ', 'OR']
 
 for state in states:
     plot_them(state)
