@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
 
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
@@ -89,15 +90,13 @@ def plot_them(state):
 #   fig.savefig(state+'.png')
 
 
+# allstates = [st for st in population.keys()]
 
-#states = ['PA', 'CA', 'LA', 'OR', 'NJ', 'AR', 'OH', 'NY']
-#states = ['MS', 'MI']
-#states = ['PA', 'MA']
-#states = ['PA', 'NM', 'OH', 'OR', 'NY', 'CA']
-states = ['CA', 'OH', 'PA', 'NY', 'NJ', 'OR']
-
-for state in states:
-    plot_them(state)
+if len(sys.argv) == 1:
+    plot_them("PA")
+else:
+    for state in sys.argv[1:]:
+        plot_them(state)
 
 plt.show()
 
