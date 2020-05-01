@@ -93,6 +93,6 @@ if len(sys.argv) == 1:
     plot_them("PA")
 else:
     for state in sys.argv[1:]:
-        plot_them(state)
+        plot_them(state.upper())
 
 plt.show()
