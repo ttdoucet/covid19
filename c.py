@@ -63,8 +63,6 @@ population = {'CA': 39.512e6,
               'WY': 578759
              }
 
-# population['US'] = sum(population.values())
-
 def funcs(state):
     def fwd(x):
         return x / population[state] * 10000
@@ -91,10 +89,6 @@ def plot_them(state):
 
     fig.tight_layout()
 
-
-
-# allstates = [st for st in population.keys()]
-
 if len(sys.argv) == 1:
     plot_them("PA")
 else:
@@ -102,6 +96,3 @@ else:
         plot_them(state)
 
 plt.show()
-
-
-
