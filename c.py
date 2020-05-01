@@ -74,23 +74,6 @@ def funcs(state):
 
     return (fwd, rev)
 
-
-def plot_them_(state):
-    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
-    sdd = dd.loc[state]
-
-    def plot_it(axis):
-        ax = sdd.plot(ax=axis, x='date', y='positive', grid=True, title=state+ " cases")
-        ax.set_xlabel('')
-        sec = ax.secondary_yaxis('right', functions=funcs(state))
-        sec.set_ylabel('per 10k population')
-
-    plot_it(ax1)
-    plot_it(ax2)
-    fig.tight_layout()
-#   fig.savefig(state+'.png')
-
-
 def plot_them(state):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     sdd = dd.loc[state]
