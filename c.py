@@ -63,6 +63,8 @@ population = {'CA': 39.512e6,
               'WY': 578759
              }
 
+# population['US'] = sum(population.values())
+
 def funcs(state):
     def fwd(x):
         return x / population[state] * 10000
@@ -73,21 +75,39 @@ def funcs(state):
     return (fwd, rev)
 
 
-def plot_them(state):
+def plot_them_(state):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
-
     sdd = dd.loc[state]
-    ax = sdd.plot(ax=ax1, x='date', y='positive', grid=True, title=state+ " cases")
-    ax.set_xlabel('')
-    sec = ax.secondary_yaxis('right', functions=funcs(state))
-    sec.set_ylabel('per 10k population')
 
-    ax =  sdd.plot(ax=ax2, x='date', y='death', grid=True, title=state+" deaths")
-    sec = ax.secondary_yaxis('right', functions=funcs(state))
-    ax.set_xlabel('')
-    sec.set_ylabel('per 10k population')
+    def plot_it(axis):
+        ax = sdd.plot(ax=axis, x='date', y='positive', grid=True, title=state+ " cases")
+        ax.set_xlabel('')
+        sec = ax.secondary_yaxis('right', functions=funcs(state))
+        sec.set_ylabel('per 10k population')
+
+    plot_it(ax1)
+    plot_it(ax2)
     fig.tight_layout()
 #   fig.savefig(state+'.png')
+
+
+def plot_them(state):
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
+    sdd = dd.loc[state]
+
+    def decorate(axis):
+        ax.set_xlabel('')
+        sec = ax.secondary_yaxis('right', functions=funcs(state))
+        sec.set_ylabel('per 10k population')
+
+    ax = sdd.plot(ax=ax1, x='date', y='positive', grid=True, title=state+ " cases")
+    decorate(ax1)
+
+    ax = sdd.plot(ax=ax2, x='date', y='death', grid=True, title=state+" deaths")
+    decorate(ax2)
+
+    fig.tight_layout()
+
 
 
 # allstates = [st for st in population.keys()]
