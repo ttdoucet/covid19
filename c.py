@@ -73,19 +73,23 @@ def funcs(state):
     return (fwd, rev)
 
 def plot_them(state):
-    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
+    fig, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3, figsize=(10, 5))
     sdd = dd.loc[state]
 
     def decorate(axis):
         ax.set_xlabel('')
         sec = ax.secondary_yaxis('right', functions=funcs(state))
         sec.set_ylabel('per 10k population')
+        ax.get_legend().remove()
 
-    ax = sdd.plot(ax=ax1, x='date', y='positive', grid=True, title=state+ " cases")
+    ax = sdd.plot(ax=ax1, x='date', y='death', grid=True, title=state+" deaths")
+    decorate(ax2)
+
+    ax = sdd.plot(ax=ax2, x='date', y='positive', grid=True, title=state+ " cases")
     decorate(ax1)
 
-    ax = sdd.plot(ax=ax2, x='date', y='death', grid=True, title=state+" deaths")
-    decorate(ax2)
+    ax = sdd.plot(ax=ax3, x='date', y='positiveIncrease', grid=True, title=state+ " daily cases")
+    decorate(ax3)
 
     fig.tight_layout()
 
