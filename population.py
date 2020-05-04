@@ -1,9 +1,6 @@
 import pandas as pd
 import sys
 
-# Crufty but useful for debugging.
-from pandasgui import show
-
 counties = "county_population.csv"
 county_df = pd.read_csv(counties, encoding='latin-1')
 

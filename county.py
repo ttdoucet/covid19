@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+#
+# This relies on the surprisingly-crufty Johns Hopkins dataset,
+# which screws up the reporting for New York City pretty badly.
+#
+#  https://github.com/CSSEGISandData/COVID-19.git
+#
+# and it is assumed to be cloned to the home directory.
+#
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
