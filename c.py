@@ -27,19 +27,19 @@ def plot_them(state):
     sdd = dd.loc[state]
 
     def decorate(axis):
-        ax.set_xlabel('')
-        sec = ax.secondary_yaxis('right', functions=funcs(state))
+        axis.set_xlabel('')
+        sec = axis.secondary_yaxis('right', functions=funcs(state))
         sec.set_ylabel('per 10k population')
-        ax.get_legend().remove()
+        axis.get_legend().remove()
 
     ax = sdd.plot(ax=ax1, x='date', y='death', grid=True, title=state+" deaths")
-    decorate(ax2)
+    decorate(ax)
 
     ax = sdd.plot(ax=ax2, x='date', y='positive', grid=True, title=state+ " cases")
-    decorate(ax1)
+    decorate(ax)
 
     ax = sdd.plot(ax=ax3, x='date', y='positiveIncrease', grid=True, title=state+ " daily cases")
-    decorate(ax3)
+    decorate(ax)
 
     fig.tight_layout()
 
