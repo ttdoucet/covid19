@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 
 #
-# This relies on the surprisingly-crufty Johns Hopkins dataset,
-# which screws up the reporting for New York City pretty badly.
+# This relies on the New York Times dataset
 #
-#  https://github.com/CSSEGISandData/COVID-19.git
+#  https://github.com/nytimes/covid-19-data.git (fetch)
 #
 # and it is assumed to be cloned to the home directory.
+#
+# This dataset is organized by FIPS county code, except
+# for the case of New York City, whose five counties are
+# collected into one place named New York City, with the
+# FIPS code left blank.
+#
+# Presently this code cannot show the NYC data for this reason.
 #
 
 import pandas as pd
@@ -18,17 +24,13 @@ import os
 import population as pops
 
 # Crufty but useful for debugging.
-#from pandasgui import show
+# from pandasgui import show
 
-data_dir = os.path.expanduser("~/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/")
-files = glob.glob(data_dir + "*.csv")
-
-data_frames = [pd.read_csv(file) for file in files]
-combined_df = pd.concat(data_frames, ignore_index=True)
-combined_df['date'] = 'date'
-
-fips_df = combined_df[combined_df.FIPS.notnull()]
-fips_df['date'] = pd.to_datetime(fips_df['Last_Update'])
+nytimes = os.path.expanduser("~/covid-19-data/us-counties.csv")
+dd = pd.read_csv(nytimes,
+                 parse_dates = ['date'],
+                 index_col = ['fips']
+                )
 
 def funcs(fips):
     fips = int(fips)
@@ -41,9 +43,9 @@ def funcs(fips):
     return (fwd, rev)
 
 def plot_them(fips):
-    fips = str(fips)
-    sdd = fips_df[fips_df.FIPS==int(fips)]
-    sdd_sort = sdd.sort_values(by="date")
+    fips = int(fips)
+
+    sdd = dd.loc[fips]
 
     def decorate(axis):
         axis.set_xlabel('')
@@ -59,10 +61,10 @@ def plot_them(fips):
     print(place + ": ", pops.county_pop(fips))
 
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
-    ax = sdd.plot(ax=ax1, x='date', y='Deaths', logy=False, grid=True, title = "Deaths: " + place)
+    ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True, title = "Deaths: " + place)
     decorate(ax)
 
-    ax = sdd.plot(ax=ax2, x='date', y='Confirmed', logy=False, grid=True, title = "Confirmed: " + place)
+    ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True, title = "Confirmed: " + place)
     decorate(ax)
 
     fig.tight_layout()
