@@ -42,6 +42,7 @@ def plot_them(state):
     decorate(ax)
 
     fig.tight_layout()
+    # fig.savefig(state+".png")
 
 if len(sys.argv) == 1:
     plot_them("PA")

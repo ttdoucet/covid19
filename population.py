@@ -5,12 +5,18 @@ counties = "county_population.csv"
 county_df = pd.read_csv(counties, encoding='latin-1')
 
 def county_pop(fips):
+    if fips == 'New York City':
+        return 8.399e6
+
     fips = int(fips)
     # It is hard to believe the Pandas sucks this much.  I probably
     # do not know what I am doing.
     return county_df[county_df.county_fips==fips].iloc[0]['pop2014']
 
 def county_name(fips):
+    if fips == 'New York City':
+        return fips
+
     fips = int(fips)
     return county_df[county_df.county_fips==fips].iloc[0]['county_name']
 
@@ -67,7 +73,7 @@ population = {'CA': 39.512e6,
               'AK': 731545,
               'DC': 705749,
               'VT': 623989,
-              'WY': 578759
+              'WY': 578759,
              }
 
 def us_pop(state):

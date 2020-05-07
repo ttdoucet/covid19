@@ -12,7 +12,8 @@
 # collected into one place named New York City, with the
 # FIPS code left blank.
 #
-# Presently this code cannot show the NYC data for this reason.
+# On the command line, you can type either a FIPS county code
+# or the string "New York City", or any combination.
 #
 
 import pandas as pd
@@ -20,6 +21,7 @@ import matplotlib.pyplot as plt
 import sys
 import glob
 import os
+import click
 
 import population as pops
 
@@ -27,13 +29,21 @@ import population as pops
 # from pandasgui import show
 
 nytimes = os.path.expanduser("~/covid-19-data/us-counties.csv")
-dd = pd.read_csv(nytimes,
-                 parse_dates = ['date'],
-                 index_col = ['fips']
-                )
+by_fips = pd.read_csv(nytimes,
+                      parse_dates = ['date'],
+                      index_col = ['fips']
+                     )
+by_name = pd.read_csv(nytimes,
+                      parse_dates = ['date'],
+                      index_col = ['county']
+                     )
+
+nyc = 'New York City'
 
 def funcs(fips):
-    fips = int(fips)
+    if fips != nyc:
+        fips = int(fips)
+
     def fwd(x):
         return x / pops.county_pop(fips) * 10000
 
@@ -42,10 +52,12 @@ def funcs(fips):
 
     return (fwd, rev)
 
-def plot_them(fips):
-    fips = int(fips)
-
-    sdd = dd.loc[fips]
+def plot_them(fips, daily):
+    if fips == nyc:
+        sdd = by_name.loc[fips]
+    else:
+        fips = int(fips)
+        sdd = by_fips.loc[fips]
 
     def decorate(axis):
         axis.set_xlabel('')
@@ -61,10 +73,17 @@ def plot_them(fips):
     print(place + ": ", pops.county_pop(fips))
 
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
-    ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True, title = "Deaths: " + place)
+
+    if daily:
+        sdd['deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
+        sdd['cases'] = sdd['cases'] - sdd['cases'].shift(1)
+
+    ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
+                  title = ("New Deaths: " if daily else "Deaths: ") + place)
     decorate(ax)
 
-    ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True, title = "Confirmed: " + place)
+    ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
+                  title = ("New Confirmed: " if daily else "Confirmed: ") + place)
     decorate(ax)
 
     fig.tight_layout()
@@ -75,11 +94,26 @@ def fip_stat(fips):
     name = pops.county_name(fips)
     print(name + ": " + str(pop) )
 
-if len(sys.argv) == 1:
-    plot_them(42003) # Allegheny County
+@click.command()
+@click.option("--daily/--cumulative", default=False, help="Daily cases or total cases")
+@click.argument('counties', nargs=-1)
+def foobar(daily, counties):
+    if len(counties) == 0:
+        plot_them(42003, daily) # Allegheny County
+    else:
+        for county in counties:
+            plot_them(county, daily)
+    plt.show()
 
-else:
-    for fips in sys.argv[1:]:
-        plot_them(fips.upper())
+if __name__ == '__main__':
+    foobar()
 
-plt.show()
+
+# if len(sys.argv) == 1:
+#     plot_them(42003) # Allegheny County
+
+# else:
+#     for fips in sys.argv[1:]:
+#         plot_them(fips)
+
+# plt.show()
