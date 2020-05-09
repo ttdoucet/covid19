@@ -83,7 +83,7 @@ def plot_them(fips, daily):
     decorate(ax)
 
     ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
-                  title = ("New Confirmed: " if daily else "Confirmed: ") + place)
+                  title = ("New Cases: " if daily else "Cases: ") + place)
     decorate(ax)
 
     fig.tight_layout()
