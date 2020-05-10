@@ -10,10 +10,13 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 import sys
 import glob
 import os
 import click
+
+from scipy.signal import savgol_filter
 
 import population as pops
 
@@ -36,6 +39,12 @@ def funcs(fips):
 
     return (fwd, rev)
 
+
+def smooth(y):
+    yhat = savgol_filter(y[1:], 7, 0)
+    yhat = np.insert(yhat, 0, 0, axis=0)
+    return yhat
+
 def plot_them(daily):
     sdd = df
 
@@ -55,13 +64,24 @@ def plot_them(daily):
         sdd['deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
         sdd['cases'] = sdd['cases'] - sdd['cases'].shift(1)
 
+
+    sdd['cases-smoothed'] = smooth(sdd.cases.values)
+    sdd['deaths-smoothed'] = smooth(sdd.deaths.values)
+
     ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                   title = ("New Deaths: " if daily else "Deaths: ") + "USA")
+
+    if daily:
+        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color='darksalmon')
 
     decorate(ax)
 
     ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
                   title = ("New Cases: " if daily else "Cases: ") + "USA")
+
+    if daily:
+        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color='darksalmon')
+
     decorate(ax)
 
     fig.tight_layout()
