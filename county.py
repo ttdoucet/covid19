@@ -18,6 +18,8 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
+import numpy as np
 import sys
 import glob
 import os
@@ -52,6 +54,11 @@ def funcs(fips):
 
     return (fwd, rev)
 
+def smooth(y):
+    yhat = savgol_filter(y[1:], 7, 0)
+    yhat = np.insert(yhat, 0, 0, axis=0)
+    return yhat
+
 def plot_them(fips, daily):
     if fips == nyc:
         sdd = by_name.loc[fips]
@@ -80,10 +87,18 @@ def plot_them(fips, daily):
 
     ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                   title = ("New Deaths: " if daily else "Deaths: ") + place)
+    if daily:
+        sdd['deaths-smoothed'] = smooth(sdd.deaths.values)
+        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color='darksalmon')
+
     decorate(ax)
 
     ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
                   title = ("New Cases: " if daily else "Cases: ") + place)
+    if daily:
+        sdd['cases-smoothed'] = smooth(sdd.cases.values)
+        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color='darksalmon')
+
     decorate(ax)
 
     fig.tight_layout()
