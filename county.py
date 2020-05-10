@@ -97,7 +97,7 @@ def fip_stat(fips):
 @click.command()
 @click.option("--daily/--cumulative", default=False, help="Daily cases or total cases")
 @click.argument('counties', nargs=-1)
-def foobar(daily, counties):
+def cmdline(daily, counties):
     if len(counties) == 0:
         plot_them(42003, daily) # Allegheny County
     else:
@@ -106,14 +106,4 @@ def foobar(daily, counties):
     plt.show()
 
 if __name__ == '__main__':
-    foobar()
-
-
-# if len(sys.argv) == 1:
-#     plot_them(42003) # Allegheny County
-
-# else:
-#     for fips in sys.argv[1:]:
-#         plot_them(fips)
-
-# plt.show()
+    cmdline()
