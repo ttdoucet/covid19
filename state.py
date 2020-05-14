@@ -25,8 +25,7 @@ def funcs(state):
     return (fwd, rev)
 
 def smooth(y):
-    yhat = savgol_filter(y[1:], 7, 0)
-    yhat = np.insert(yhat, 0, 0, axis=0)
+    yhat = savgol_filter(y, 7, 0)
     return yhat
 
 def plot_them(state):
@@ -47,9 +46,11 @@ def plot_them(state):
 
     ax = sdd.plot(ax=ax3, x='date', y='positiveIncrease', grid=True, title=state+ " daily cases")
 
-    print(sdd.positiveIncrease.values)
-#    sdd['daily-cases-smoothed'] = smooth(sdd.positiveIncrease.values)
-#    sdd.plot(ax=ax3, x='date',  y='daily-cases-smoothed', grid=True, color='darksalmon')
+    delta = sdd.positiveIncrease.values
+    delta[-1] = 0
+
+    sdd['daily-cases-smoothed'] = smooth(delta)
+    sdd.plot(ax=ax3, x='date',  y='daily-cases-smoothed', grid=True, color='darksalmon')
 
     decorate(ax)
 
