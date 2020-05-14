@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
+import numpy as np
 import sys
 
 import population as pops
@@ -22,6 +24,11 @@ def funcs(state):
 
     return (fwd, rev)
 
+def smooth(y):
+    yhat = savgol_filter(y[1:], 7, 0)
+    yhat = np.insert(yhat, 0, 0, axis=0)
+    return yhat
+
 def plot_them(state):
     fig, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3, figsize=(10, 5))
     sdd = dd.loc[state]
@@ -39,6 +46,11 @@ def plot_them(state):
     decorate(ax)
 
     ax = sdd.plot(ax=ax3, x='date', y='positiveIncrease', grid=True, title=state+ " daily cases")
+
+    print(sdd.positiveIncrease.values)
+#    sdd['daily-cases-smoothed'] = smooth(sdd.positiveIncrease.values)
+#    sdd.plot(ax=ax3, x='date',  y='daily-cases-smoothed', grid=True, color='darksalmon')
+
     decorate(ax)
 
     fig.tight_layout()

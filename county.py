@@ -88,8 +88,8 @@ def plot_them(fips, daily):
     ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                   title = ("New Deaths: " if daily else "Deaths: ") + place)
     if daily:
-        sdd['deaths-smoothed'] = smooth(sdd.deaths.values)
-        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color='darksalmon')
+        sdd['deaths_smoothed'] = smooth(sdd.deaths.values)
+        sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color='darksalmon')
 
     decorate(ax)
 
