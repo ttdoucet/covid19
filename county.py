@@ -80,24 +80,39 @@ def plot_them(fips, daily):
     print(place + ": ", pops.county_pop(fips))
 
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
+    plot_color='#1f77b4'
 
     if daily:
         sdd['deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
         sdd['cases'] = sdd['cases'] - sdd['cases'].shift(1)
 
-    ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
-                  title = ("New Deaths: " if daily else "Deaths: ") + place)
+    if daily:
+        ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
+                      color=plot_color, alpha=0.20,
+                      title = "New Deaths: " + place)
+    else:
+        ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
+                      color=plot_color,
+                      title = "Deaths: " + place)
+
     if daily:
         sdd['deaths_smoothed'] = smooth(sdd.deaths.values)
-        sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color='darksalmon')
+        sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color=plot_color)
 
     decorate(ax)
 
-    ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
-                  title = ("New Cases: " if daily else "Cases: ") + place)
+    if daily:
+        ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
+                      color=plot_color, alpha=0.20,
+                      title = ("New Cases: " + place))
+    else:
+        ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
+                      color=plot_color,
+                      title = ("Cases: " + place))
+
     if daily:
         sdd['cases-smoothed'] = smooth(sdd.cases.values)
-        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color='darksalmon')
+        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color=plot_color)
 
     decorate(ax)
 
