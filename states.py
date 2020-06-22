@@ -37,9 +37,10 @@ def plot_grid(states):
 
     n = len(states)
     
-    s = int(math.sqrt(n) + 0.5)
-    if (s*s < n):
-        s += 1
+    s = int(math.sqrt(n))
+    t = s
+    while s * t < n:
+        t = t + 1
 
     def decorate(axis):
         axis.set_xlabel('')
@@ -50,21 +51,25 @@ def plot_grid(states):
         date_form = DateFormatter("%m-%d")
 
         ax.xaxis.set_major_formatter(date_form)
-        
+
         for xlabel in ax.get_xticklabels():
             xlabel.set_fontsize(6)
 
     fig, ax = plt.subplots(figsize=(24, 24))
     for i in range(n):
-        ax = plt.subplot2grid( (s,s), (i//s, i%s) )
+        ax = plt.subplot2grid( (t, s), (i//s, i%s) )
 
         state = states[i].upper()
         sdd = dd.loc[state]
 
-#        ax = sdd.plot(ax=ax, x='date', y='positiveIncrease', grid=True)
+        plot_color='#1f77b4'
+
+        ax = sdd.plot(ax=ax, x='date', y='positiveIncrease', grid=True, style='-',
+                      color=plot_color, alpha=0.20)
         title = ax.set_title(state, loc='left',
                              color='black',
                              verticalalignment='top',
+                             fontweight='roman'
 #                            bbox=dict(facecolor='blue', alpha=0.25)
         )
         title.set_position([0.05, 0.85])
@@ -73,13 +78,19 @@ def plot_grid(states):
         delta[-1] = 0
 
         sdd['daily-cases-smoothed'] = smooth(delta)
-        sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color='darksalmon')
+        sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color=plot_color)
 
         decorate(ax)
 
     fig.tight_layout()
     # fig.savefig("state-plots.png")
 
+
+import matplotlib
+import sys
+
+print(plt.rcParams['axes.prop_cycle'].by_key()['color'])
+#sys.exit(0)
 
 if len(sys.argv) == 1:
     plot_grid( list(pops.population.keys()) )
