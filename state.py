@@ -44,13 +44,17 @@ def plot_them(state):
     ax = sdd.plot(ax=ax2, x='date', y='positive', grid=True, title=state+ " cases")
     decorate(ax)
 
-    ax = sdd.plot(ax=ax3, x='date', y='positiveIncrease', grid=True, title=state+ " daily cases")
+    plot_color='#1f77b4'
+    ax = sdd.plot(ax=ax3, x='date', y='positiveIncrease',
+                  color=plot_color, alpha=0.25,
+                  grid=True,
+                  title=state+ " daily cases")
 
     delta = sdd.positiveIncrease.values
     delta[-1] = 0
 
     sdd['daily-cases-smoothed'] = smooth(delta)
-    sdd.plot(ax=ax3, x='date',  y='daily-cases-smoothed', grid=True, color='darksalmon')
+    sdd.plot(ax=ax3, x='date',  y='daily-cases-smoothed', grid=True, color=plot_color)
 
     decorate(ax)
 
