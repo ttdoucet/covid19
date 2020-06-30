@@ -6,6 +6,7 @@ import numpy as np
 import sys
 import math
 
+
 import population as pops
 
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
@@ -49,7 +50,6 @@ def plot_grid(states):
         axis.get_legend().remove()
 
         date_form = DateFormatter("%m-%d")
-
         ax.xaxis.set_major_formatter(date_form)
 
         for xlabel in ax.get_xticklabels():

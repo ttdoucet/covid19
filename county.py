@@ -18,6 +18,7 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
 from scipy.signal import savgol_filter
 import numpy as np
 import sys
@@ -71,6 +72,8 @@ def plot_them(fips, daily):
         sec = axis.secondary_yaxis('right', functions=funcs(fips))
         sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
+        date_form = DateFormatter("%m-%d")
+        ax.xaxis.set_major_formatter(date_form)
 
     if len(sdd.index) == 0:
         print("no data")
