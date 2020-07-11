@@ -27,7 +27,7 @@ def funcs(state):
     return (fwd, rev)
 
 def smooth(y):
-    yhat = savgol_filter(y, 7, 0)
+    yhat = savgol_filter(y, 7, 1)
     return yhat
 
 from matplotlib.dates import DateFormatter

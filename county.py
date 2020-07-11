@@ -56,7 +56,7 @@ def funcs(fips):
     return (fwd, rev)
 
 def smooth(y):
-    yhat = savgol_filter(y[1:], 7, 0)
+    yhat = savgol_filter(y[1:], 7, 1)
     yhat = np.insert(yhat, 0, 0, axis=0)
     return yhat
 

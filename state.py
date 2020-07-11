@@ -26,7 +26,7 @@ def funcs(state):
     return (fwd, rev)
 
 def smooth(y):
-    yhat = savgol_filter(y, 7, 0)
+    yhat = savgol_filter(y, 7, 1)
     return yhat
 
 def plot_them(state):
@@ -42,7 +42,7 @@ def plot_them(state):
         date_form = DateFormatter("%m-%d")
         axis.xaxis.set_major_formatter(date_form)
 
-    ax = sdd.plot(ax=ax1, x='date', y='death', grid=True, title=state+" deaths")
+    ax = sdd.plot(x='date', y='death', ax=ax1, grid=True, title=state+" deaths")
     decorate(ax)
 
     ax = sdd.plot(ax=ax2, x='date', y='positive', grid=True, title=state+ " cases")
