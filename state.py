@@ -87,7 +87,6 @@ def plot_them(state, daily):
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
 @click.argument('states', nargs=-1)
 def cmdline(daily, states):
-    print("cmdline daily:", daily)
     if len(states) == 0:
         plot_them('PA', daily)
     else:

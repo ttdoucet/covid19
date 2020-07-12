@@ -5,7 +5,7 @@ from scipy.signal import savgol_filter
 import numpy as np
 import sys
 import math
-
+import click
 
 import population as pops
 
@@ -34,8 +34,7 @@ from matplotlib.dates import DateFormatter
 # from matplotlib.dates import ConciseDateFormatter
 # import matplotlib.dates as mdates
 
-def plot_grid(states):
-
+def plot_grid(states, daily):
     n = len(states)
     
     s = int(math.sqrt(n))
@@ -46,7 +45,7 @@ def plot_grid(states):
     def decorate(axis):
         axis.set_xlabel('')
         sec = axis.secondary_yaxis('right', functions=funcs(state))
-        # sec.set_ylabel('per 10k population')
+        sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
 
         date_form = DateFormatter("%m-%d")
@@ -64,38 +63,42 @@ def plot_grid(states):
 
         plot_color='#1f77b4'
 
-        ax = sdd.plot(ax=ax, x='date', y='positiveIncrease', grid=True, style='-',
-                      color=plot_color, alpha=0.20)
+        if daily:
+            ax = sdd.plot(ax=ax, x='date', y='positiveIncrease', grid=True, style='-',
+                          color=plot_color, alpha=0.20)
+        else:
+            ax = sdd.plot(ax=ax, x='date', y='positive', grid=True, style='-',
+                          color=plot_color)
+
         title = ax.set_title(state, loc='left',
                              color='black',
                              verticalalignment='top',
-                             fontweight='roman'
-#                            bbox=dict(facecolor='blue', alpha=0.25)
-        )
+                             fontweight='roman')
+
         title.set_position([0.05, 0.85])
 
-        delta = sdd.positiveIncrease.values
-        delta[-1] = 0
+        if daily:
+            delta = sdd.positiveIncrease.values
+            delta[-1] = 0
 
-        sdd['daily-cases-smoothed'] = smooth(delta)
-        sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color=plot_color)
+            sdd['daily-cases-smoothed'] = smooth(delta)
+            sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color=plot_color)
 
         decorate(ax)
 
     fig.tight_layout()
-    # fig.savefig("state-plots.png")
+
 
 
 import matplotlib
 import sys
 
-print(plt.rcParams['axes.prop_cycle'].by_key()['color'])
-#sys.exit(0)
+@click.command()
+@click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
+@click.argument('states', nargs=-1)
+def cmdline(daily, states):
+    plot_grid( list(pops.population.keys()), daily)
+    plt.show()
 
-if len(sys.argv) == 1:
-    plot_grid( list(pops.population.keys()) )
-    # plot_grid(["PA", "OH", "LA", "NY", "NM", "AR", "DE"])
-else:
-    plot_grid(sys.argv[1:])
-
-plt.show()
+if __name__ == '__main__':
+    cmdline()
