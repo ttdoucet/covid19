@@ -62,10 +62,10 @@ def smooth(y):
 
 def plot_them(fips, daily):
     if fips == nyc:
-        sdd = by_name.loc[fips]
+        sdd = by_name.loc[fips].copy()
     else:
         fips = int(fips)
-        sdd = by_fips.loc[fips]
+        sdd = by_fips.loc[fips].copy()
 
     def decorate(axis):
         axis.set_xlabel('')
@@ -86,8 +86,8 @@ def plot_them(fips, daily):
     plot_color='#1f77b4'
 
     if daily:
-        sdd['deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
-        sdd['cases'] = sdd['cases'] - sdd['cases'].shift(1)
+        sdd.loc[:, 'deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
+        sdd.loc[:, 'cases'] = sdd['cases'] - sdd['cases'].shift(1)
 
     if daily:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
@@ -99,7 +99,7 @@ def plot_them(fips, daily):
                       title = "Deaths: " + place)
 
     if daily:
-        sdd['deaths_smoothed'] = smooth(sdd.deaths.values)
+        sdd.loc[:, 'deaths_smoothed'] = smooth(sdd.deaths.values)
         sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color=plot_color)
 
     decorate(ax)
