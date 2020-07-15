@@ -34,6 +34,9 @@ def plot_them(state, daily):
         date_form = DateFormatter("%m-%d")
         axis.xaxis.set_major_formatter(date_form)
 
+        for xlabel in ax.get_xticklabels():
+            xlabel.set_fontsize(6)
+
 
     if daily == False:
         # Cumulative Deaths

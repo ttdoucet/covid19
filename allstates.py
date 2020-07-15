@@ -10,6 +10,8 @@ import click
 import population as pops
 import util
 
+# import state
+
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
                  usecols=['date', 'state', 'positive', 'positiveIncrease', 'death'],
@@ -54,7 +56,7 @@ def plot_grid(states, daily):
 
         if daily:
             ax = sdd.plot(ax=ax, x='date', y='positiveIncrease', grid=True, style='-',
-                          color=util.case_color, alpha=0.20)
+                          color=util.case_color, alpha=0.25)
         else:
             ax = sdd.plot(ax=ax, x='date', y='positive', grid=True, style='-',
                           color=util.case_color)
@@ -86,7 +88,10 @@ import sys
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
 @click.argument('states', nargs=-1)
 def cmdline(daily, states):
-    plot_grid( list(pops.population.keys()), daily)
+    if len(states) == 0:
+        plot_grid( list(pops.population.keys()), daily)
+    else:
+        plot_grid(states, daily)
     plt.show()
 
 if __name__ == '__main__':

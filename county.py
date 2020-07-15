@@ -78,7 +78,7 @@ def plot_them(fips, daily):
 
     if daily:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
-                      color=util.death_color, alpha=0.20,
+                      color=util.death_color, alpha=0.25,
                       title = "Daily Deaths: " + place)
     else:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
@@ -93,7 +93,7 @@ def plot_them(fips, daily):
 
     if daily:
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
-                      color=util.case_color, alpha=0.20,
+                      color=util.case_color, alpha=0.25,
                       title = ("Daily Cases: " + place))
     else:
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
