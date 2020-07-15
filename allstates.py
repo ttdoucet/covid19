@@ -59,7 +59,7 @@ def plot_grid(states, daily):
         ax = plt.subplot2grid( (t, s), (i//s, i%s) )
 
         state = states[i].upper()
-        sdd = dd.loc[state]
+        sdd = dd.loc[state].copy()
 
         plot_color='#1f77b4'
 
