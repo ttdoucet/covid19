@@ -20,6 +20,7 @@ import click
 from scipy.signal import savgol_filter
 
 import population as pops
+import util
 
 # Crufty but useful for debugging.
 #from pandasgui import show
@@ -73,18 +74,21 @@ def plot_them(daily):
     sdd['deaths-smoothed'] = smooth(sdd.deaths.values)
 
     ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
-                  title = ("New Deaths: " if daily else "Deaths: ") + "USA")
+                  title = ("Daily Deaths: " if daily else "Deaths: ") + "USA",
+                  color=util.death_color, alpha=0.25 if daily else 1.0)
 
     if daily:
-        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color='darksalmon')
+        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
 
     decorate(ax)
 
     ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
-                  title = ("New Cases: " if daily else "Cases: ") + "USA")
+                  title = ("Daily Cases: " if daily else "Cases: ") + "USA",
+                  color=util.case_color, alpha=0.25 if daily else 1.0)
 
     if daily:
-        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color='darksalmon')
+        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True,
+                 color=util.case_color)
 
     decorate(ax)
 

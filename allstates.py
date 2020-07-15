@@ -8,6 +8,7 @@ import math
 import click
 
 import population as pops
+import util
 
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
@@ -61,14 +62,12 @@ def plot_grid(states, daily):
         state = states[i].upper()
         sdd = dd.loc[state].copy()
 
-        plot_color='#1f77b4'
-
         if daily:
             ax = sdd.plot(ax=ax, x='date', y='positiveIncrease', grid=True, style='-',
-                          color=plot_color, alpha=0.20)
+                          color=util.case_color, alpha=0.20)
         else:
             ax = sdd.plot(ax=ax, x='date', y='positive', grid=True, style='-',
-                          color=plot_color)
+                          color=util.case_color)
 
         title = ax.set_title(state, loc='left',
                              color='black',
@@ -82,7 +81,7 @@ def plot_grid(states, daily):
             delta[-1] = 0
 
             sdd['daily-cases-smoothed'] = smooth(delta)
-            sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color=plot_color)
+            sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)
 

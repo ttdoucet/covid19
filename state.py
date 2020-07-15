@@ -8,6 +8,7 @@ import sys
 import click
 
 import population as pops
+import util
 
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
@@ -43,12 +44,10 @@ def plot_them(state, daily):
         date_form = DateFormatter("%m-%d")
         axis.xaxis.set_major_formatter(date_form)
 
-    case_color='#1f77b4'
-    death_color = '#e03b68' # framboise
 
     if daily == False:
         # Cumulative Deaths
-        ax = sdd.plot(x='date', y='death', ax=ax1, grid=True, title=state+" deaths", color=death_color)
+        ax = sdd.plot(x='date', y='death', ax=ax1, grid=True, title=state+" deaths", color=util.death_color)
         decorate(ax)
 
         # Cumulative Cases
@@ -58,7 +57,7 @@ def plot_them(state, daily):
     else:
         # Daily Deaths
         ax = sdd.plot(ax=ax1, x='date', y='deathIncrease',
-                      color=death_color, alpha=0.25,
+                      color=util.death_color, alpha=0.25,
                       grid=True,
                       title=state+ " daily deaths")
 
@@ -67,12 +66,12 @@ def plot_them(state, daily):
 
         sdd.loc[:, 'deathIncrease-smoothed'] = smooth(delta)
 
-        sdd.plot(ax=ax1, x='date',  y='deathIncrease-smoothed', grid=True, color=death_color)
+        sdd.plot(ax=ax1, x='date',  y='deathIncrease-smoothed', grid=True, color=util.death_color)
         decorate(ax)
 
         # Daily Cases
         ax = sdd.plot(ax=ax2, x='date', y='positiveIncrease',
-                      color=case_color, alpha=0.25,
+                      color=util.case_color, alpha=0.25,
                       grid=True,
                       title=state+ " daily cases")
 
@@ -80,7 +79,7 @@ def plot_them(state, daily):
         delta[-1] = 0
 
         sdd.loc[:, 'daily-cases-smoothed'] = smooth(delta)
-        sdd.plot(ax=ax2, x='date',  y='daily-cases-smoothed', grid=True, color=case_color)
+        sdd.plot(ax=ax2, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)
 

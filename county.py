@@ -27,6 +27,7 @@ import os
 import click
 
 import population as pops
+import util
 
 # Crufty but useful for debugging.
 # from pandasgui import show
@@ -83,7 +84,6 @@ def plot_them(fips, daily):
     print(place + ": ", pops.county_pop(fips))
 
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
-    plot_color='#1f77b4'
 
     if daily:
         sdd.loc[:, 'deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
@@ -91,31 +91,31 @@ def plot_them(fips, daily):
 
     if daily:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
-                      color=plot_color, alpha=0.20,
+                      color=util.death_color, alpha=0.20,
                       title = "New Deaths: " + place)
     else:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
-                      color=plot_color,
+                      color=util.death_color,
                       title = "Deaths: " + place)
 
     if daily:
         sdd.loc[:, 'deaths_smoothed'] = smooth(sdd.deaths.values)
-        sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color=plot_color)
+        sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color=util.death_color)
 
     decorate(ax)
 
     if daily:
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
-                      color=plot_color, alpha=0.20,
+                      color=util.case_color, alpha=0.20,
                       title = ("New Cases: " + place))
     else:
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
-                      color=plot_color,
+                      color=util.case_color,
                       title = ("Cases: " + place))
 
     if daily:
         sdd['cases-smoothed'] = smooth(sdd.cases.values)
-        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color=plot_color)
+        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color=util.case_color)
 
     decorate(ax)
 
