@@ -17,16 +17,6 @@ dd = pd.read_csv(url,
                  index_col=['state']
                  )
 
-
-def funcs(state):
-    def fwd(x):
-        return x / pops.us_pop(state) * 10000
-
-    def rev(f):
-        return f * pops.us_pop(state) / 10000
-
-    return (fwd, rev)
-
 def smooth(y):
     yhat = savgol_filter(y, 7, 1)
     return yhat
@@ -45,7 +35,7 @@ def plot_grid(states, daily):
 
     def decorate(axis):
         axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=funcs(state))
+        sec = axis.secondary_yaxis('right', functions=pops.state_funcs(state))
         sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
 

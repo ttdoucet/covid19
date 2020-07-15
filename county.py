@@ -44,18 +44,6 @@ by_name = pd.read_csv(nytimes,
 
 nyc = 'New York City'
 
-def funcs(fips):
-    if fips != nyc:
-        fips = int(fips)
-
-    def fwd(x):
-        return x / pops.county_pop(fips) * 10000
-
-    def rev(f):
-        return f * pops.county_pop(fips) / 10000
-
-    return (fwd, rev)
-
 def smooth(y):
     yhat = savgol_filter(y[1:], 7, 1)
     yhat = np.insert(yhat, 0, 0, axis=0)
@@ -70,7 +58,7 @@ def plot_them(fips, daily):
 
     def decorate(axis):
         axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=funcs(fips))
+        sec = axis.secondary_yaxis('right', functions=pops.county_funcs(fips))
         sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
         date_form = DateFormatter("%m-%d")
@@ -81,7 +69,6 @@ def plot_them(fips, daily):
         return
 
     place = pops.county_name(fips)
-    print(place + ": ", pops.county_pop(fips))
 
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 
@@ -92,7 +79,7 @@ def plot_them(fips, daily):
     if daily:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                       color=util.death_color, alpha=0.20,
-                      title = "New Deaths: " + place)
+                      title = "Daily Deaths: " + place)
     else:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                       color=util.death_color,
@@ -107,7 +94,7 @@ def plot_them(fips, daily):
     if daily:
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
                       color=util.case_color, alpha=0.20,
-                      title = ("New Cases: " + place))
+                      title = ("Daily Cases: " + place))
     else:
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
                       color=util.case_color,

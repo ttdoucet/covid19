@@ -78,3 +78,27 @@ population = {'CA': 39.512e6,
 
 def us_pop(state):
     return population[state];
+
+
+def gen_funcs(population):
+    def fwd(x):
+        return x / population * 10000
+
+    def rev(f):
+        return f * population / 10000
+
+    return (fwd, rev)
+
+def state_funcs(state):
+    return gen_funcs(us_pop(state))
+
+pop_us = 328.2e6
+
+def usa_funcs():
+    return gen_funcs(pop_us)
+
+def county_funcs(fips):
+    if fips != 'New York City':
+        fips = int(fips)
+    population = county_pop(fips)
+    return gen_funcs(population)

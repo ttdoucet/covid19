@@ -22,25 +22,8 @@ from scipy.signal import savgol_filter
 import population as pops
 import util
 
-# Crufty but useful for debugging.
-#from pandasgui import show
-
 nytimes = os.path.expanduser("~/covid-19-data/us.csv")
-df = pd.read_csv(nytimes,
-                 parse_dates = ['date']
-                )
-
-pop_us = 328.2e6
-
-def funcs(fips):
-    def fwd(x):
-        return x / pop_us * 10000
-
-    def rev(f):
-        return f * pop_us / 10000
-
-    return (fwd, rev)
-
+df = pd.read_csv(nytimes, parse_dates = ['date'] )
 
 def smooth(y):
     yhat = savgol_filter(y[1:], 7, 1)
@@ -52,7 +35,7 @@ def plot_them(daily):
 
     def decorate(axis):
         axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=funcs(pop_us))
+        sec = axis.secondary_yaxis('right', functions=pops.usa_funcs())
         sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
 
