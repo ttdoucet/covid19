@@ -64,6 +64,10 @@ def plot_them(fips, daily):
         date_form = DateFormatter("%m-%d")
         ax.xaxis.set_major_formatter(date_form)
 
+        for xlabel in ax.get_xticklabels():
+            xlabel.set_fontsize(8)
+            xlabel.set_rotation(20)
+
     if len(sdd.index) == 0:
         print("no data")
         return

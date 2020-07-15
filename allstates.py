@@ -46,6 +46,7 @@ def plot_grid(states, daily):
 
         for xlabel in ax.get_xticklabels():
             xlabel.set_fontsize(6)
+            xlabel.set_rotation(20)
 
     fig, ax = plt.subplots(figsize=(24, 24))
     for i in range(n):

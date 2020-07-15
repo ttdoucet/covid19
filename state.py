@@ -35,8 +35,8 @@ def plot_them(state, daily):
         axis.xaxis.set_major_formatter(date_form)
 
         for xlabel in ax.get_xticklabels():
-            xlabel.set_fontsize(6)
-
+            xlabel.set_fontsize(8)
+            xlabel.set_rotation(25)
 
     if daily == False:
         # Cumulative Deaths
@@ -77,6 +77,7 @@ def plot_them(state, daily):
         decorate(ax)
 
     fig.tight_layout()
+
 
 @click.command()
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
