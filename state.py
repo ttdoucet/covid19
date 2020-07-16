@@ -63,8 +63,6 @@ def plot_them(states, daily, title):
                       title=title + " daily deaths")
 
         delta = sdd.deathIncrease.values
-        delta[-1] = 0
-
         sdd.loc[:, 'deathIncrease-smoothed'] = smooth(delta)
 
         sdd.plot(ax=ax1, x='date',  y='deathIncrease-smoothed', grid=True, color=util.death_color)
@@ -77,8 +75,6 @@ def plot_them(states, daily, title):
                       title=title + " daily cases")
 
         delta = sdd.positiveIncrease.values
-        delta[-1] = 0
-
         sdd.loc[:, 'daily-cases-smoothed'] = smooth(delta)
         sdd.plot(ax=ax2, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
 
