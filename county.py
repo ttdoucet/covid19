@@ -29,9 +29,6 @@ import click
 import population as pops
 import util
 
-# Crufty but useful for debugging.
-# from pandasgui import show
-
 nytimes = os.path.expanduser("~/covid-19-data/us-counties.csv")
 by_fips = pd.read_csv(nytimes,
                       parse_dates = ['date'],
@@ -83,14 +80,18 @@ def plot_them(fips, daily):
         ax = sdd.plot(ax=ax1, x='date', y='daily_deaths', logy=False, grid=True,
                       color=util.death_color, alpha=0.25,
                       title = "Daily Deaths: " + place)
+
+        sdd.loc[:, 'deaths-smoothed'] = smooth(sdd.daily_deaths.values)
+        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
+
     else:
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                       color=util.death_color,
                       title = "Deaths: " + place)
 
-    if daily:
-        sdd.loc[:, 'deaths-smoothed'] = smooth(sdd.daily_deaths.values)
-        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
+#    if daily:
+#        sdd.loc[:, 'deaths-smoothed'] = smooth(sdd.daily_deaths.values)
+#        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
 
     decorate(ax)
 
@@ -111,11 +112,6 @@ def plot_them(fips, daily):
 
     fig.tight_layout()
 
-
-def fip_stat(fips):
-    pop = pops.county_pop(fips)
-    name = pops.county_name(fips)
-    print(name + ": " + str(pop) )
 
 @click.command()
 @click.option("--daily/--cumulative", default=False, help="Daily cases or total cases")
