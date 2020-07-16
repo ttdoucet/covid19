@@ -89,8 +89,11 @@ def gen_funcs(population):
 
     return (fwd, rev)
 
-def state_funcs(state):
-    return gen_funcs(us_pop(state))
+def state_funcs(states):
+    population = 0
+    for state in states:
+        population += us_pop(state)
+    return gen_funcs(population)
 
 pop_us = 328.2e6
 

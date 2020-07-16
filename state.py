@@ -14,20 +14,28 @@ url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
                  usecols=['date', 'state', 'positive', 'positiveIncrease', 'death', 'deathIncrease'],
                  parse_dates=['date'],
-                 index_col=['state']
                  )
 
 def smooth(y):
     yhat = savgol_filter(y, 7, 1)
     return yhat
 
-def plot_them(state, daily):
+def plot_them(states, daily, title):
+    if not title:
+        if len(states) == 1:
+            title = states[0]
+        else:
+            title = "Combined"
+
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
-    sdd = dd.loc[state].copy()
+
+    sdd = dd.loc[dd['state'].isin(states) ].copy()
+    sdd = sdd.groupby('date').sum()
+    sdd = sdd.reset_index()
 
     def decorate(axis):
         axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=pops.state_funcs(state))
+        sec = axis.secondary_yaxis('right', functions=pops.state_funcs(states))
         sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
 
@@ -40,11 +48,11 @@ def plot_them(state, daily):
 
     if daily == False:
         # Cumulative Deaths
-        ax = sdd.plot(x='date', y='death', ax=ax1, grid=True, title=state+" deaths", color=util.death_color)
+        ax = sdd.plot(x='date', y='death', ax=ax1, grid=True, title=title + " deaths", color=util.death_color)
         decorate(ax)
 
         # Cumulative Cases
-        ax = sdd.plot(ax=ax2, x='date', y='positive', grid=True, title=state+ " cases")
+        ax = sdd.plot(ax=ax2, x='date', y='positive', grid=True, title=title + " cases")
         decorate(ax)
 
     else:
@@ -52,7 +60,7 @@ def plot_them(state, daily):
         ax = sdd.plot(ax=ax1, x='date', y='deathIncrease',
                       color=util.death_color, alpha=0.25,
                       grid=True,
-                      title=state+ " daily deaths")
+                      title=title + " daily deaths")
 
         delta = sdd.deathIncrease.values
         delta[-1] = 0
@@ -66,7 +74,7 @@ def plot_them(state, daily):
         ax = sdd.plot(ax=ax2, x='date', y='positiveIncrease',
                       color=util.case_color, alpha=0.25,
                       grid=True,
-                      title=state+ " daily cases")
+                      title=title + " daily cases")
 
         delta = sdd.positiveIncrease.values
         delta[-1] = 0
@@ -81,13 +89,14 @@ def plot_them(state, daily):
 
 @click.command()
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
+@click.option("--title", default="", help="Label for plot.")
 @click.argument('states', nargs=-1)
-def cmdline(daily, states):
+
+def cmdline(daily, states, title):
     if len(states) == 0:
-        plot_them('PA', daily)
+        plot_them(['PA'], daily, title)
     else:
-        for state in states:
-            plot_them(state.upper(), daily)
+        plot_them(states, daily, title);
     plt.show()
 
 if __name__ == '__main__':
