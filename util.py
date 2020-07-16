@@ -7,3 +7,7 @@ def smooth(y):
     yhat = savgol_filter(y, 7, 1)
     return yhat
 
+def calc_daily(df, src, dest):
+    df[dest] = df[src] - df[src].shift(1)
+    df.loc[:, dest] = df.loc[:, dest].fillna(0)    
+    pass

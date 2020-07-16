@@ -47,10 +47,8 @@ def plot_them(daily):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 
     if daily:
-        sdd['deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
-        sdd['cases'] = sdd['cases'] - sdd['cases'].shift(1)
-        sdd.deaths = sdd.deaths.fillna(0)
-        sdd.cases = sdd.cases.fillna(0)
+        util.calc_daily(sdd, 'deaths', 'deaths')
+        util.calc_daily(sdd, 'cases', 'cases')
 
     sdd['cases_smoothed'] = util.smooth(sdd.cases.values)
     sdd['deaths_smoothed'] = util.smooth(sdd.deaths.values)

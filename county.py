@@ -68,10 +68,8 @@ def plot_them(fips, daily):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 
     if daily:
-        sdd.loc[:, 'daily_deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
-        sdd.loc[:, 'daily_cases'] = sdd['cases'] - sdd['cases'].shift(1)
-        sdd.daily_deaths = sdd.daily_deaths.fillna(0)
-        sdd.daily_cases = sdd.daily_cases.fillna(0)
+        util.calc_daily(sdd, 'deaths', 'daily_deaths');
+        util.calc_daily(sdd, 'cases', 'daily_cases');
 
         ax = sdd.plot(ax=ax1, x='date', y='daily_deaths', logy=False, grid=True,
                       color=util.death_color, alpha=0.25,
