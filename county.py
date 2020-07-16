@@ -58,7 +58,7 @@ def plot_them(fips, daily):
 
     def decorate(axis):
         axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=pops.county_funcs(fips))
+        sec = axis.secondary_yaxis('right', functions=pops.county_funcs([fips]))
         sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
         date_form = DateFormatter("%m-%d")

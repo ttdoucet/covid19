@@ -100,8 +100,11 @@ pop_us = 328.2e6
 def usa_funcs():
     return gen_funcs(pop_us)
 
-def county_funcs(fips):
-    if fips != 'New York City':
-        fips = int(fips)
-    population = county_pop(fips)
+def county_funcs(counties):
+    population = 0
+    for fips in counties:
+        if fips != 'New York City':
+            fips = int(fips)
+        population += county_pop(fips)
     return gen_funcs(population)
+
