@@ -77,11 +77,10 @@ def plot_them(fips, daily):
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 
     if daily:
-        sdd.loc[:, 'deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
-        sdd.loc[:, 'cases'] = sdd['cases'] - sdd['cases'].shift(1)
+        sdd.loc[:, 'daily_deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
+        sdd.loc[:, 'daily_cases'] = sdd['cases'] - sdd['cases'].shift(1)
 
-    if daily:
-        ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
+        ax = sdd.plot(ax=ax1, x='date', y='daily_deaths', logy=False, grid=True,
                       color=util.death_color, alpha=0.25,
                       title = "Daily Deaths: " + place)
     else:
@@ -90,23 +89,23 @@ def plot_them(fips, daily):
                       title = "Deaths: " + place)
 
     if daily:
-        sdd.loc[:, 'deaths_smoothed'] = smooth(sdd.deaths.values)
-        sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color=util.death_color)
+        sdd.loc[:, 'deaths-smoothed'] = smooth(sdd.daily_deaths.values)
+        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
 
     decorate(ax)
 
     if daily:
-        ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
+        ax = sdd.plot(ax=ax2, x='date', y='daily_cases', logy=False, grid=True,
                       color=util.case_color, alpha=0.25,
                       title = ("Daily Cases: " + place))
+
+        sdd['cases-smoothed'] = smooth(sdd.daily_cases.values)
+        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color=util.case_color)
+
     else:
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
                       color=util.case_color,
                       title = ("Cases: " + place))
-
-    if daily:
-        sdd['cases-smoothed'] = smooth(sdd.cases.values)
-        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color=util.case_color)
 
     decorate(ax)
 
