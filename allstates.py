@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.signal import savgol_filter
 import numpy as np
 import sys
 import math
@@ -10,8 +9,6 @@ import click
 import population as pops
 import util
 
-# import state
-
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
                  usecols=['date', 'state', 'positive', 'positiveIncrease', 'death'],
@@ -19,13 +16,7 @@ dd = pd.read_csv(url,
                  index_col=['state']
                  )
 
-def smooth(y):
-    yhat = savgol_filter(y, 7, 1)
-    return yhat
-
 from matplotlib.dates import DateFormatter
-# from matplotlib.dates import ConciseDateFormatter
-# import matplotlib.dates as mdates
 
 def plot_grid(states, daily):
     n = len(states)
@@ -73,7 +64,7 @@ def plot_grid(states, daily):
             delta = sdd.positiveIncrease.values
             delta[-1] = 0
 
-            sdd['daily-cases-smoothed'] = smooth(delta)
+            sdd['daily-cases-smoothed'] = util.smooth(delta)
             sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)

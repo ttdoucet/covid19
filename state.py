@@ -2,7 +2,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
-from scipy.signal import savgol_filter
 import numpy as np
 import sys
 import click
@@ -15,10 +14,6 @@ dd = pd.read_csv(url,
                  usecols=['date', 'state', 'positive', 'positiveIncrease', 'death', 'deathIncrease'],
                  parse_dates=['date'],
                  )
-
-def smooth(y):
-    yhat = savgol_filter(y, 7, 1)
-    return yhat
 
 def plot_them(states, daily, title):
     if not title:
@@ -63,7 +58,7 @@ def plot_them(states, daily, title):
                       title=title + " daily deaths")
 
         delta = sdd.deathIncrease.values
-        sdd.loc[:, 'deathIncrease-smoothed'] = smooth(delta)
+        sdd.loc[:, 'deathIncrease-smoothed'] = util.smooth(delta)
 
         sdd.plot(ax=ax1, x='date',  y='deathIncrease-smoothed', grid=True, color=util.death_color)
         decorate(ax)
@@ -75,7 +70,7 @@ def plot_them(states, daily, title):
                       title=title + " daily cases")
 
         delta = sdd.positiveIncrease.values
-        sdd.loc[:, 'daily-cases-smoothed'] = smooth(delta)
+        sdd.loc[:, 'daily-cases-smoothed'] = util.smooth(delta)
         sdd.plot(ax=ax2, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)

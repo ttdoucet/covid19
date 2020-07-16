@@ -17,18 +17,11 @@ import glob
 import os
 import click
 
-from scipy.signal import savgol_filter
-
 import population as pops
 import util
 
 nytimes = os.path.expanduser("~/covid-19-data/us.csv")
 df = pd.read_csv(nytimes, parse_dates = ['date'] )
-
-def smooth(y):
-    yhat = savgol_filter(y[1:], 7, 1)
-    yhat = np.insert(yhat, 0, 0, axis=0)
-    return yhat
 
 def plot_them(daily):
     sdd = df
@@ -56,17 +49,18 @@ def plot_them(daily):
     if daily:
         sdd['deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
         sdd['cases'] = sdd['cases'] - sdd['cases'].shift(1)
+        sdd.deaths = sdd.deaths.fillna(0)
+        sdd.cases = sdd.cases.fillna(0)
 
-
-    sdd['cases-smoothed'] = smooth(sdd.cases.values)
-    sdd['deaths-smoothed'] = smooth(sdd.deaths.values)
+    sdd['cases_smoothed'] = util.smooth(sdd.cases.values)
+    sdd['deaths_smoothed'] = util.smooth(sdd.deaths.values)
 
     ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                   title = ("Daily Deaths: " if daily else "Deaths: ") + "USA",
                   color=util.death_color, alpha=0.25 if daily else 1.0)
 
     if daily:
-        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
+        sdd.plot(ax=ax1, x='date',  y='deaths_smoothed', grid=True, color=util.death_color)
 
     decorate(ax)
 
@@ -75,7 +69,7 @@ def plot_them(daily):
                   color=util.case_color, alpha=0.25 if daily else 1.0)
 
     if daily:
-        sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True,
+        sdd.plot(ax=ax2, x='date',  y='cases_smoothed', grid=True,
                  color=util.case_color)
 
     decorate(ax)

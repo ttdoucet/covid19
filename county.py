@@ -19,7 +19,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
-from scipy.signal import savgol_filter
 import numpy as np
 import sys
 import glob
@@ -40,10 +39,6 @@ by_name = pd.read_csv(nytimes,
                      )
 
 nyc = 'New York City'
-
-def smooth(y):
-    yhat = savgol_filter(y, 7, 1)
-    return yhat
 
 def plot_them(fips, daily):
     if fips == nyc:
@@ -82,7 +77,7 @@ def plot_them(fips, daily):
                       color=util.death_color, alpha=0.25,
                       title = "Daily Deaths: " + place)
 
-        sdd.loc[:, 'deaths-smoothed'] = smooth(sdd.daily_deaths.values)
+        sdd.loc[:, 'deaths-smoothed'] = util.smooth(sdd.daily_deaths.values)
         sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
 
     else:
@@ -97,7 +92,7 @@ def plot_them(fips, daily):
                       color=util.case_color, alpha=0.25,
                       title = ("Daily Cases: " + place))
 
-        sdd['cases-smoothed'] = smooth(sdd.daily_cases.values)
+        sdd['cases-smoothed'] = util.smooth(sdd.daily_cases.values)
         sdd.plot(ax=ax2, x='date',  y='cases-smoothed', grid=True, color=util.case_color)
 
     else:
