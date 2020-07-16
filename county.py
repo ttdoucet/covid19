@@ -42,8 +42,7 @@ by_name = pd.read_csv(nytimes,
 nyc = 'New York City'
 
 def smooth(y):
-    yhat = savgol_filter(y[1:], 7, 1)
-    yhat = np.insert(yhat, 0, 0, axis=0)
+    yhat = savgol_filter(y, 7, 1)
     return yhat
 
 def plot_them(fips, daily):
@@ -76,6 +75,8 @@ def plot_them(fips, daily):
     if daily:
         sdd.loc[:, 'daily_deaths'] = sdd['deaths'] - sdd['deaths'].shift(1)
         sdd.loc[:, 'daily_cases'] = sdd['cases'] - sdd['cases'].shift(1)
+        sdd.daily_deaths = sdd.daily_deaths.fillna(0)
+        sdd.daily_cases = sdd.daily_cases.fillna(0)
 
         ax = sdd.plot(ax=ax1, x='date', y='daily_deaths', logy=False, grid=True,
                       color=util.death_color, alpha=0.25,
@@ -88,10 +89,6 @@ def plot_them(fips, daily):
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                       color=util.death_color,
                       title = "Deaths: " + place)
-
-#    if daily:
-#        sdd.loc[:, 'deaths-smoothed'] = smooth(sdd.daily_deaths.values)
-#        sdd.plot(ax=ax1, x='date',  y='deaths-smoothed', grid=True, color=util.death_color)
 
     decorate(ax)
 
