@@ -37,7 +37,7 @@ def plot_grid(states, daily):
 
     def decorate(axis):
         axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=pops.state_funcs(state))
+        sec = axis.secondary_yaxis('right', functions=pops.state_funcs([state]))
         sec.set_ylabel('per 10k population')
         axis.get_legend().remove()
 
