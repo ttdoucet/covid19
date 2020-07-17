@@ -11,7 +11,7 @@ import util
 
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
-                 usecols=['date', 'state', 'positive', 'positiveIncrease', 'death'],
+                 usecols=['date', 'state', 'positive', 'death'],
                  parse_dates=['date'],
                  index_col=['state']
                  )
@@ -45,12 +45,15 @@ def plot_grid(states, daily):
 
         state = states[i].upper()
         sdd = dd.loc[state].copy()
+        sdd.set_index('date', inplace=True)
+        sdd.sort_index(inplace=True)
 
         if daily:
-            ax = sdd.plot(ax=ax, x='date', y='positiveIncrease', grid=True, style='-',
+            util.calc_daily(sdd, 'positive', 'positiveIncrease')
+            ax = sdd.plot(ax=ax, y='positiveIncrease', grid=True, style='-',
                           color=util.case_color, alpha=0.25)
         else:
-            ax = sdd.plot(ax=ax, x='date', y='positive', grid=True, style='-',
+            ax = sdd.plot(ax=ax, y='positive', grid=True, style='-',
                           color=util.case_color)
 
         title = ax.set_title(state, loc='left',
@@ -62,10 +65,10 @@ def plot_grid(states, daily):
 
         if daily:
             delta = sdd.positiveIncrease.values
-            delta[-1] = 0
+            # delta[-1] = 0
 
             sdd['daily-cases-smoothed'] = util.smooth(delta)
-            sdd.plot(ax=ax, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
+            sdd.plot(ax=ax, y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)
 

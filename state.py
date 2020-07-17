@@ -11,7 +11,8 @@ import util
 
 url = 'https://covidtracking.com/api/v1/states/daily.csv'
 dd = pd.read_csv(url,
-                 usecols=['date', 'state', 'positive', 'positiveIncrease', 'death', 'deathIncrease'],
+#                usecols=['date', 'state', 'positive', 'positiveIncrease', 'death', 'deathIncrease'],
+                 usecols=['date', 'state', 'positive', 'death'],
                  parse_dates=['date'],
                  )
 
@@ -52,6 +53,7 @@ def plot_them(states, daily, title):
 
     else:
         # Daily Deaths
+        util.calc_daily(sdd, 'death', 'deathIncrease')
         ax = sdd.plot(ax=ax1, x='date', y='deathIncrease',
                       color=util.death_color, alpha=0.25,
                       grid=True,
@@ -64,6 +66,8 @@ def plot_them(states, daily, title):
         decorate(ax)
 
         # Daily Cases
+        util.calc_daily(sdd, 'positive', 'positiveIncrease')
+
         ax = sdd.plot(ax=ax2, x='date', y='positiveIncrease',
                       color=util.case_color, alpha=0.25,
                       grid=True,
