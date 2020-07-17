@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
 import numpy as np
 import sys
+import os
 import math
 import click
-
 import population as pops
 import util
 
-url = 'https://covidtracking.com/api/v1/states/daily.csv'
-dd = pd.read_csv(url,
-                 usecols=['date', 'state', 'positive', 'death'],
-                 parse_dates=['date'],
-                 index_col=['state']
-                 )
+def read_nyt_states():
+    nytimes = os.path.expanduser("~/covid-19-data/us-states.csv")
 
-from matplotlib.dates import DateFormatter
+    dd = pd.read_csv(nytimes,
+                     usecols=['date', 'state', 'cases', 'deaths'],
+                     parse_dates=['date'],
+                     index_col=['state']
+                     )
+    return dd
+
+dd = read_nyt_states()
 
 def plot_grid(states, daily):
     n = len(states)
@@ -44,16 +48,18 @@ def plot_grid(states, daily):
         ax = plt.subplot2grid( (t, s), (i//s, i%s) )
 
         state = states[i].upper()
-        sdd = dd.loc[state].copy()
+        fstate = pops.full_state(state)
+
+        sdd = dd.loc[fstate].copy()
         sdd.set_index('date', inplace=True)
         sdd.sort_index(inplace=True)
 
         if daily:
-            util.calc_daily(sdd, 'positive', 'positiveIncrease')
+            util.calc_daily(sdd, 'cases', 'positiveIncrease')
             ax = sdd.plot(ax=ax, y='positiveIncrease', grid=True, style='-',
                           color=util.case_color, alpha=0.25)
         else:
-            ax = sdd.plot(ax=ax, y='positive', grid=True, style='-',
+            ax = sdd.plot(ax=ax, y='cases', grid=True, style='-',
                           color=util.case_color)
 
         title = ax.set_title(state, loc='left',

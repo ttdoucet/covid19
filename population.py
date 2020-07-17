@@ -131,8 +131,11 @@ state_abbrevs ={
              }
 
 
+def full_state(state):
+    return state_abbrevs[state]
+
 def full_states(states):
-    return [state_abbrevs[st] for st in states];
+    return [full_state(st) for st in states];
 
 def us_pop(state):
     return population[state];
