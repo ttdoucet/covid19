@@ -84,11 +84,15 @@ def plot_them(dd, states, daily, title):
 @click.command()
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
 @click.option("--title", default="", help="Label for plot.")
+@click.option("--allstates/--sucks", default=False, help="Combine all states for USA plot.")
 @click.argument('states', nargs=-1)
 
-def cmdline(daily, states, title):
+def cmdline(daily, states, allstates, title):
     dd = read_nyt_states()
-    if len(states) == 0:
+
+    if allstates:
+        plot_them(dd, pops.population.keys(), daily, title)
+    elif len(states) == 0:
         plot_them(dd, ['PA'], daily, title)
     else:
         plot_them(dd, states, daily, title);
