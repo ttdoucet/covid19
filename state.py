@@ -84,7 +84,7 @@ def plot_them(dd, states, daily, title):
 @click.command()
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
 @click.option("--title", default="", help="Label for plot.")
-@click.option("--allstates/--sucks", default=False, help="Combine all states for USA plot.")
+@click.option("--allstates", default=False, help="Combine all states for USA plot.")
 @click.argument('states', nargs=-1)
 
 def cmdline(daily, states, allstates, title):
