@@ -15,8 +15,7 @@ def read_nyt_states():
 
     dd = pd.read_csv(nytimes,
                      usecols=['date', 'state', 'cases', 'deaths'],
-                     parse_dates=['date'],
-                     index_col=['state']
+                     parse_dates=['date']
                      )
     return dd
 
@@ -43,6 +42,7 @@ def plot_grid(states, daily):
             xlabel.set_fontsize(6)
             xlabel.set_rotation(20)
 
+    dd.set_index('state', inplace=True)
     fig, ax = plt.subplots(figsize=(24, 24))
     for i in range(n):
         ax = plt.subplot2grid( (t, s), (i//s, i%s) )
@@ -56,10 +56,10 @@ def plot_grid(states, daily):
 
         if daily:
             util.calc_daily(sdd, 'cases', 'positiveIncrease')
-            ax = sdd.plot(ax=ax, y='positiveIncrease', grid=True, style='-',
+            ax = sdd.plot(ax=ax, y='positiveIncrease', grid=True,
                           color=util.case_color, alpha=0.25)
         else:
-            ax = sdd.plot(ax=ax, y='cases', grid=True, style='-',
+            ax = sdd.plot(ax=ax, y='cases', grid=True,
                           color=util.case_color)
 
         title = ax.set_title(state, loc='left',
@@ -70,17 +70,12 @@ def plot_grid(states, daily):
         title.set_position([0.05, 0.85])
 
         if daily:
-            delta = sdd.positiveIncrease.values
-            # delta[-1] = 0
-
-            sdd['daily-cases-smoothed'] = util.smooth(delta)
+            sdd['daily-cases-smoothed'] = util.smooth(sdd.positiveIncrease.values)
             sdd.plot(ax=ax, y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)
 
     fig.tight_layout()
-
-
 
 import matplotlib
 import sys

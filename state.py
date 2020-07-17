@@ -37,46 +37,36 @@ def plot_them(dd, states, daily, title):
         date_form = DateFormatter("%m-%d")
         axis.xaxis.set_major_formatter(date_form)
 
-        for xlabel in ax.get_xticklabels():
+        for xlabel in axis.get_xticklabels():
             xlabel.set_fontsize(8)
             xlabel.set_rotation(25)
 
+    def plot(axis, df, column, **kwargs):
+        ax = df.plot(ax=axis, y=column, grid=True, **kwargs)
+        decorate(ax)
+        return ax
+
     if daily == False:
-        # Cumulative Deaths
-        ax = sdd.plot(y='deaths', ax=ax1, grid=True, title=title + " deaths", color=util.death_color)
-        decorate(ax)
-
-        # Cumulative Cases
-        ax = sdd.plot(ax=ax2, y='cases', grid=True, title=title + " cases")
-        decorate(ax)
-
+        # cumulative deaths & cases
+        plot(ax1, sdd, 'deaths', title=title + " deaths", color=util.death_color)
+        plot(ax2, sdd, 'cases', title=title + " cases")
     else:
-        # Daily Deaths
+        # daily deaths
         util.calc_daily(sdd, 'deaths', 'deathIncrease')
-        ax = sdd.plot(ax=ax1, y='deathIncrease',
-                      color=util.death_color, alpha=0.25,
-                      grid=True,
-                      title=title + " daily deaths")
+        plot(ax1, sdd, 'deathIncrease', title=title + " daily deaths", color=util.death_color, alpha=0.25)
 
         delta = sdd.deathIncrease.values
         sdd.loc[:, 'deathIncrease-smoothed'] = util.smooth(delta)
+        plot(ax1, sdd, 'deathIncrease-smoothed', color=util.death_color)
 
-        sdd.plot(ax=ax1, y='deathIncrease-smoothed', grid=True, color=util.death_color)
-        decorate(ax)
-
-        # Daily Cases
+        # daily cases
         util.calc_daily(sdd, 'cases', 'positiveIncrease')
-
-        ax = sdd.plot(ax=ax2, y='positiveIncrease',
-                      color=util.case_color, alpha=0.25,
-                      grid=True,
-                      title=title + " daily cases")
+        plot(ax2, sdd, 'positiveIncrease', title=title + " daily cases", color=util.case_color, alpha=0.25)
 
         delta = sdd.positiveIncrease.values
         sdd.loc[:, 'daily-cases-smoothed'] = util.smooth(delta)
-        sdd.plot(ax=ax2, y='daily-cases-smoothed', grid=True, color=util.case_color)
+        plot(ax2, sdd, 'daily-cases-smoothed', color=util.case_color)
 
-        decorate(ax)
     fig.tight_layout()
 
 @click.command()
