@@ -76,9 +76,66 @@ population = {'CA': 39.512e6,
               'WY': 578759,
              }
 
+state_abbrevs ={
+              'CA' : 'California',
+              'TX' : 'Texas',
+              'FL' : 'Florida',
+              'NY' : 'New York',
+              'PA' : 'Pennsylvania',
+              'IL' : 'Illinois',
+              'OH' : 'Ohio',
+              'GA' : 'Georgia',
+              'NC' : 'North Carolina',
+              'MI' : 'Michigan',
+              'NJ' : 'New Jersey',
+              'VA' : 'Virginia',
+              'WA' : 'Washington',
+              'AZ' : 'Arizona',
+              'DC' : 'District of Columbia',
+              'WV' : 'West Virginia',
+              'SC' : 'South Carolina',
+              'SD' : 'South Dakota',
+              'ND' : 'North Dakota',
+              'NM' : 'New Mexico',
+              'NH' : 'New Hampshire',
+              'RI' : 'Rhode Island',
+              'MA' : 'Massachusetts',
+              'TN' : 'Tennessee',
+              'IN' : 'Indiana',
+              'MO' : 'Missouri',
+              'MD' : 'Maryland',
+              'WI' : 'Wisconsin',
+              'CO' : 'Colorado',
+              'MN' : 'Minnesota',
+              'AL' : 'Alabama',
+              'LA' : 'Louisiana',
+              'KY' : 'Kentucky',
+              'OR' : 'Oregon',
+              'OK' : 'Oklahoma',
+              'CT' : 'Connecticut',
+              'UT' : 'Utah',
+              'IA' : 'Iowa',
+              'NV' : 'Nevada',
+              'AR' : 'Arkansas',
+              'MS' : 'Mississippi',
+              'KS' : 'Kansas',
+              'NE' : 'Nebraska',
+              'ID' : 'Idaho',
+              'HI' : 'Hawaii',
+              'ME' : 'Maine',
+              'MT' : 'Montana',
+              'DE' : 'Delaware',
+              'AK' : 'Alaska',
+              'VT' : 'Vermont',
+              'WY' : 'Wyoming'
+             }
+
+
+def full_states(states):
+    return [state_abbrevs[st] for st in states];
+
 def us_pop(state):
     return population[state];
-
 
 def gen_funcs(population):
     def fwd(x):

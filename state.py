@@ -5,16 +5,22 @@ from matplotlib.dates import DateFormatter
 import numpy as np
 import sys
 import click
+import os
 
 import population as pops
 import util
 
-url = 'https://covidtracking.com/api/v1/states/daily.csv'
-dd = pd.read_csv(url,
-#                usecols=['date', 'state', 'positive', 'positiveIncrease', 'death', 'deathIncrease'],
-                 usecols=['date', 'state', 'positive', 'death'],
-                 parse_dates=['date'],
-                 )
+def read_nyt_states():
+    nytimes = os.path.expanduser("~/covid-19-data/us-states.csv")
+
+    dd = pd.read_csv(nytimes,
+                     usecols=['date', 'state', 'cases', 'deaths'],
+                     parse_dates=['date'],
+                     )
+
+    return dd
+
+dd = read_nyt_states()
 
 def plot_them(states, daily, title):
     if not title:
@@ -25,7 +31,7 @@ def plot_them(states, daily, title):
 
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 
-    sdd = dd.loc[dd['state'].isin(states) ].copy()
+    sdd = dd.loc[dd['state'].isin(pops.full_states(states)) ].copy()
     sdd = sdd.groupby('date').sum()
     sdd = sdd.reset_index()
 
@@ -44,16 +50,16 @@ def plot_them(states, daily, title):
 
     if daily == False:
         # Cumulative Deaths
-        ax = sdd.plot(x='date', y='death', ax=ax1, grid=True, title=title + " deaths", color=util.death_color)
+        ax = sdd.plot(x='date', y='deaths', ax=ax1, grid=True, title=title + " deaths", color=util.death_color)
         decorate(ax)
 
         # Cumulative Cases
-        ax = sdd.plot(ax=ax2, x='date', y='positive', grid=True, title=title + " cases")
+        ax = sdd.plot(ax=ax2, x='date', y='cases', grid=True, title=title + " cases")
         decorate(ax)
 
     else:
         # Daily Deaths
-        util.calc_daily(sdd, 'death', 'deathIncrease')
+        util.calc_daily(sdd, 'deaths', 'deathIncrease')
         ax = sdd.plot(ax=ax1, x='date', y='deathIncrease',
                       color=util.death_color, alpha=0.25,
                       grid=True,
@@ -66,7 +72,7 @@ def plot_them(states, daily, title):
         decorate(ax)
 
         # Daily Cases
-        util.calc_daily(sdd, 'positive', 'positiveIncrease')
+        util.calc_daily(sdd, 'cases', 'positiveIncrease')
 
         ax = sdd.plot(ax=ax2, x='date', y='positiveIncrease',
                       color=util.case_color, alpha=0.25,
