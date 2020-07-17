@@ -2,11 +2,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
-import numpy as np
-import sys
 import click
 import os
-
 import population as pops
 import util
 
@@ -20,9 +17,7 @@ def read_nyt_states():
 
     return dd
 
-dd = read_nyt_states()
-
-def plot_them(states, daily, title):
+def plot_them(dd, states, daily, title):
     if not title:
         if len(states) == 1:
             title = states[0]
@@ -84,9 +79,7 @@ def plot_them(states, daily, title):
         sdd.plot(ax=ax2, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)
-
     fig.tight_layout()
-
 
 @click.command()
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
@@ -94,10 +87,11 @@ def plot_them(states, daily, title):
 @click.argument('states', nargs=-1)
 
 def cmdline(daily, states, title):
+    dd = read_nyt_states()
     if len(states) == 0:
-        plot_them(['PA'], daily, title)
+        plot_them(dd, ['PA'], daily, title)
     else:
-        plot_them(states, daily, title);
+        plot_them(dd, states, daily, title);
     plt.show()
 
 if __name__ == '__main__':
