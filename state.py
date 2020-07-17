@@ -14,7 +14,6 @@ def read_nyt_states():
                      usecols=['date', 'state', 'cases', 'deaths'],
                      parse_dates=['date'],
                      )
-
     return dd
 
 def plot_them(dd, states, daily, title):
@@ -28,7 +27,6 @@ def plot_them(dd, states, daily, title):
 
     sdd = dd.loc[dd['state'].isin(pops.full_states(states)) ].copy()
     sdd = sdd.groupby('date').sum()
-    sdd = sdd.reset_index()
 
     def decorate(axis):
         axis.set_xlabel('')
@@ -45,17 +43,17 @@ def plot_them(dd, states, daily, title):
 
     if daily == False:
         # Cumulative Deaths
-        ax = sdd.plot(x='date', y='deaths', ax=ax1, grid=True, title=title + " deaths", color=util.death_color)
+        ax = sdd.plot(y='deaths', ax=ax1, grid=True, title=title + " deaths", color=util.death_color)
         decorate(ax)
 
         # Cumulative Cases
-        ax = sdd.plot(ax=ax2, x='date', y='cases', grid=True, title=title + " cases")
+        ax = sdd.plot(ax=ax2, y='cases', grid=True, title=title + " cases")
         decorate(ax)
 
     else:
         # Daily Deaths
         util.calc_daily(sdd, 'deaths', 'deathIncrease')
-        ax = sdd.plot(ax=ax1, x='date', y='deathIncrease',
+        ax = sdd.plot(ax=ax1, y='deathIncrease',
                       color=util.death_color, alpha=0.25,
                       grid=True,
                       title=title + " daily deaths")
@@ -63,20 +61,20 @@ def plot_them(dd, states, daily, title):
         delta = sdd.deathIncrease.values
         sdd.loc[:, 'deathIncrease-smoothed'] = util.smooth(delta)
 
-        sdd.plot(ax=ax1, x='date',  y='deathIncrease-smoothed', grid=True, color=util.death_color)
+        sdd.plot(ax=ax1, y='deathIncrease-smoothed', grid=True, color=util.death_color)
         decorate(ax)
 
         # Daily Cases
         util.calc_daily(sdd, 'cases', 'positiveIncrease')
 
-        ax = sdd.plot(ax=ax2, x='date', y='positiveIncrease',
+        ax = sdd.plot(ax=ax2, y='positiveIncrease',
                       color=util.case_color, alpha=0.25,
                       grid=True,
                       title=title + " daily cases")
 
         delta = sdd.positiveIncrease.values
         sdd.loc[:, 'daily-cases-smoothed'] = util.smooth(delta)
-        sdd.plot(ax=ax2, x='date',  y='daily-cases-smoothed', grid=True, color=util.case_color)
+        sdd.plot(ax=ax2, y='daily-cases-smoothed', grid=True, color=util.case_color)
 
         decorate(ax)
     fig.tight_layout()
@@ -92,7 +90,6 @@ def cmdline(daily, states, allstates, title):
 
     if allstates:
         states = pops.population.keys()
-        print("fucking title:", title)
     elif len(states) == 0:
         states = ['PA']
     plot_them(dd, states, daily, title);
