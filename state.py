@@ -2,11 +2,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
-import math
-import click
 import os
+import click
 import population as pops
 import util
+import math
 
 def read_nyt_states():
     nytimes = os.path.expanduser("~/covid-19-data/us-states.csv")
