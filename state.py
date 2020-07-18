@@ -17,6 +17,19 @@ def read_nyt_states():
                      )
     return dd
 
+def decorate(axis, states):
+    axis.set_xlabel('')
+    sec = axis.secondary_yaxis('right', functions=pops.state_funcs(states))
+    sec.set_ylabel('per 10k population')
+    axis.get_legend().remove()
+
+    date_form = DateFormatter("%m-%d")
+    axis.xaxis.set_major_formatter(date_form)
+
+    for xlabel in axis.get_xticklabels():
+        xlabel.set_fontsize(8)
+        xlabel.set_rotation(20)
+
 def plot_grid(dd, states, daily):
     n = len(states)
     
@@ -24,19 +37,6 @@ def plot_grid(dd, states, daily):
     t = s
     while s * t < n:
         t = t + 1
-
-    def decorate(axis):
-        axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=pops.state_funcs([state]))
-        sec.set_ylabel('per 10k population')
-        axis.get_legend().remove()
-
-        date_form = DateFormatter("%m-%d")
-        ax.xaxis.set_major_formatter(date_form)
-
-        for xlabel in ax.get_xticklabels():
-            xlabel.set_fontsize(6)
-            xlabel.set_rotation(20)
 
     dd.set_index('state', inplace=True)
     fig, ax = plt.subplots(figsize=(24, 24))
@@ -69,7 +69,7 @@ def plot_grid(dd, states, daily):
             sdd['daily-cases-smoothed'] = util.smooth(sdd.positiveIncrease.values)
             sdd.plot(ax=ax, y='daily-cases-smoothed', grid=True, color=util.case_color)
 
-        decorate(ax)
+        decorate(ax, [state])
 
     fig.tight_layout()
 
@@ -85,22 +85,9 @@ def plot_pair(dd, states, daily, title):
     sdd = dd.loc[dd['state'].isin(pops.full_states(states)) ].copy()
     sdd = sdd.groupby('date').sum()
 
-    def decorate(axis):
-        axis.set_xlabel('')
-        sec = axis.secondary_yaxis('right', functions=pops.state_funcs(states))
-        sec.set_ylabel('per 10k population')
-        axis.get_legend().remove()
-
-        date_form = DateFormatter("%m-%d")
-        axis.xaxis.set_major_formatter(date_form)
-
-        for xlabel in axis.get_xticklabels():
-            xlabel.set_fontsize(8)
-            xlabel.set_rotation(25)
-
     def plot(axis, df, column, **kwargs):
         ax = df.plot(ax=axis, y=column, grid=True, **kwargs)
-        decorate(ax)
+        decorate(ax, states)
         return ax
 
     if daily == False:
