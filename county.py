@@ -1,30 +1,9 @@
 #!/usr/bin/env python3
-
-#
-# This relies on the New York Times dataset
-#
-#  https://github.com/nytimes/covid-19-data.git (fetch)
-#
-# and it is assumed to be cloned to the home directory.
-#
-# This dataset is organized by FIPS county code, except
-# for the case of New York City, whose five counties are
-# collected into one place named New York City, with the
-# FIPS code left blank.
-#
-# On the command line, you can type either a FIPS county code
-# or the string "New York City", or any combination.
-#
-
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
-import numpy as np
-import sys
-import glob
 import os
 import click
-
 import population as pops
 import util
 
@@ -38,10 +17,8 @@ by_name = pd.read_csv(nytimes,
                       index_col = ['county']
                      )
 
-nyc = 'New York City'
-
 def plot_them(fips, daily):
-    if fips == nyc:
+    if fips == 'New York City':
         sdd = by_name.loc[fips].copy()
     else:
         fips = int(fips)
@@ -64,13 +41,10 @@ def plot_them(fips, daily):
         return
 
     place = pops.county_name(fips)
-
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 
     if daily:
         util.calc_daily(sdd, 'deaths', 'daily_deaths');
-        util.calc_daily(sdd, 'cases', 'daily_cases');
-
         ax = sdd.plot(ax=ax1, x='date', y='daily_deaths', logy=False, grid=True,
                       color=util.death_color, alpha=0.25,
                       title = "Daily Deaths: " + place)
@@ -82,10 +56,10 @@ def plot_them(fips, daily):
         ax = sdd.plot(ax=ax1, x='date', y='deaths', logy=False, grid=True,
                       color=util.death_color,
                       title = "Deaths: " + place)
-
     decorate(ax)
 
     if daily:
+        util.calc_daily(sdd, 'cases', 'daily_cases');
         ax = sdd.plot(ax=ax2, x='date', y='daily_cases', logy=False, grid=True,
                       color=util.case_color, alpha=0.25,
                       title = ("Daily Cases: " + place))
@@ -97,11 +71,8 @@ def plot_them(fips, daily):
         ax = sdd.plot(ax=ax2, x='date', y='cases', logy=False, grid=True,
                       color=util.case_color,
                       title = ("Cases: " + place))
-
     decorate(ax)
-
     fig.tight_layout()
-
 
 @click.command()
 @click.option("--daily/--cumulative", default=False, help="Daily cases or total cases")
