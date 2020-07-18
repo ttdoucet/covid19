@@ -30,9 +30,11 @@ def decorate(axis, states):
         xlabel.set_fontsize(8)
         xlabel.set_rotation(20)
 
-def plot_grid(dd, states, daily):
+def plot_grid(dd, states, daily, cases):
+    column = 'cases' if cases else 'deaths'
+    color = util.case_color if cases else  util.death_color
+
     n = len(states)
-    
     s = int(math.sqrt(n))
     t = s
     while s * t < n:
@@ -51,12 +53,12 @@ def plot_grid(dd, states, daily):
         sdd.sort_index(inplace=True)
 
         if daily:
-            util.calc_daily(sdd, 'cases', 'positiveIncrease')
-            ax = sdd.plot(ax=ax, y='positiveIncrease', grid=True,
-                          color=util.case_color, alpha=0.25)
+            util.calc_daily(sdd, column, 'increase')
+            ax = sdd.plot(ax=ax, y='increase', grid=True,
+                          color=color, alpha=0.25)
         else:
-            ax = sdd.plot(ax=ax, y='cases', grid=True,
-                          color=util.case_color)
+            ax = sdd.plot(ax=ax, y=column, grid=True,
+                          color=color)
 
         title = ax.set_title(state, loc='left',
                              color='black',
@@ -66,8 +68,8 @@ def plot_grid(dd, states, daily):
         title.set_position([0.05, 0.85])
 
         if daily:
-            sdd['daily-cases-smoothed'] = util.smooth(sdd.positiveIncrease.values)
-            sdd.plot(ax=ax, y='daily-cases-smoothed', grid=True, color=util.case_color)
+            sdd['smoothed'] = util.smooth(sdd.increase.values)
+            sdd.plot(ax=ax, y='smoothed', grid=True, color=color)
 
         decorate(ax, [state])
 
@@ -116,9 +118,10 @@ def plot_pair(dd, states, daily, title):
 @click.option("--title", default="", help="Label for plot.")
 @click.option("--allstates/--specified", default=False, help="Combine all states for USA plot.")
 @click.option("--grid/--combined", default=False, help="Plot grid of states or combined super-state.")
+@click.option("--cases/--deaths", default=True, help="Show either cases or deaths for grid plot.")
 @click.argument('states', nargs=-1)
 
-def cmdline(daily, states, allstates, grid, title):
+def cmdline(daily, states, allstates, grid, title, cases):
     dd = read_nyt_states()
     if allstates:
         states = list(pops.population.keys())
@@ -126,7 +129,7 @@ def cmdline(daily, states, allstates, grid, title):
         states = list(pops.population.keys()) if grid else ['PA']
 
     if grid:
-        plot_grid(dd, states, daily)
+        plot_grid(dd, states, daily, cases)
     else:
         plot_pair(dd, states, daily, title);
     plt.show()
