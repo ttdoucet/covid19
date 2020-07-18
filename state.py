@@ -116,7 +116,7 @@ def plot_pair(dd, states, daily, title):
 @click.command()
 @click.option("--daily/--cumulative", default=True, help="Daily cases or total cases")
 @click.option("--title", default="", help="Label for plot.")
-@click.option("--allstates/--specified", default=False, help="Combine all states for USA plot.")
+@click.option("--allstates/--specified", default=False, help="All states plus DC.")
 @click.option("--grid/--combined", default=False, help="Plot grid of states or combined super-state.")
 @click.option("--cases/--deaths", default=True, help="Show either cases or deaths for grid plot.")
 @click.argument('states', nargs=-1)
