@@ -10,7 +10,6 @@ import math
 
 def read_nyt_states():
     nytimes = os.path.expanduser("~/covid-19-data/us-states.csv")
-
     dd = pd.read_csv(nytimes,
                      usecols=['date', 'state', 'cases', 'deaths'],
                      parse_dates=['date'],
@@ -31,14 +30,14 @@ def decorate(axis, states):
         xlabel.set_rotation(20)
 
 def plot_grid(dd, states, daily, cases):
-    column = 'cases' if cases else 'deaths'
-    color = util.case_color if cases else  util.death_color
-
     n = len(states)
     s = int(math.sqrt(n))
     t = s
     while s * t < n:
         t = t + 1
+
+    column = 'cases' if cases else 'deaths'
+    color = util.case_color if cases else  util.death_color
 
     dd.set_index('state', inplace=True)
     fig, ax = plt.subplots(figsize=(24, 24))
@@ -60,10 +59,8 @@ def plot_grid(dd, states, daily, cases):
             ax = sdd.plot(ax=ax, y=column, grid=True,
                           color=color)
 
-        title = ax.set_title(state, loc='left',
-                             color='black',
-                             verticalalignment='top',
-                             fontweight='roman')
+        title = ax.set_title(state, loc='left', color='black',
+                             verticalalignment='top', fontweight='roman')
 
         title.set_position([0.05, 0.85])
 
